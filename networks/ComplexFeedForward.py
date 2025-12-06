@@ -20,11 +20,11 @@ class ComplexFeedForward(nn.Module):
         activation: Literal[
             "modrelu",
             "cardioid",
-            "splitgelu",
+            "cgelu",
             "zrelu",
             "crelu",
             "cleakyrelu",
-            "celu",
+            "cxelu",
             "softsign",
         ] = "modrelu",
         dropout_val: float = 0.0,
@@ -45,24 +45,9 @@ class ComplexFeedForward(nn.Module):
             )
             layers.append(ComplexLinear(prev, h, bias=True, init=init, gain=gain))
 
-            if activation == "modrelu":
-                acts.append(ComplexModReLU(h))
-            elif activation == "cardioid":
-                acts.append(ComplexCardioid())
-            elif activation == "splitgelu":
-                acts.append(ComplexSplitGELU())
-            elif activation == "zrelu":
-                acts.append(ComplexZReLU())
-            elif activation == "crelu":
-                acts.append(ComplexCReLU())
-            elif activation == "cleakyrelu":
-                acts.append(ComplexCLeakyReLU())
-            elif activation == "celu":
-                acts.append(ComplexCELU())
-            elif activation == "softsign":
-                acts.append(ComplexSoftsign())
-            else:
-                raise ValueError("Unsupported activation")
+            activation_layer = self.get_activation_layer(activation, h)
+            acts.append(activation_layer)
+
             prev = h
 
         self.hidden = nn.ModuleList(layers)
@@ -85,3 +70,26 @@ class ComplexFeedForward(nn.Module):
             xr = self.output(xr)
 
         return xr
+
+    def get_activation_layer(self, activation: str, h: int) -> nn.Module:
+        if activation == "modrelu":
+            activation_layer = ModReLU(h)
+        elif activation == "cardioid":
+            activation_layer = Cardioid()
+        elif activation == "cgelu":
+            activation_layer = CGELU()
+        elif activation == "zrelu":
+            activation_layer = zReLU()
+        elif activation == "crelu":
+            activation_layer = CReLU()
+        elif activation == "cleakyrelu":
+            activation_layer = CLeakyReLU()
+        elif activation == "cxelu":
+            activation_layer = CxELU()
+        elif activation == "softsign":
+            activation_layer = CSoftsign()
+        else:
+            raise ValueError("Unsupported activation")
+        
+        return activation_layer
+    

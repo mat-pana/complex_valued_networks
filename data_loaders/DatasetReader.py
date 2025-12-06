@@ -1,4 +1,5 @@
 from os import PathLike
+from os.path import join
 import numpy as np
 import pandas as pd
 from typing import Literal, Tuple
@@ -10,7 +11,7 @@ class DatasetReader:
         self, dataset: Literal["FordA", "FordB", "FaultDetectionA"] = "FordA"
     ) -> None:
         self.dataset = dataset
-        self.path = lambda part: f"datasets/{dataset}/{dataset}_{part}.ts"
+        self.path = lambda part: join("datasets", dataset, f"{dataset}_{part}.ts")
 
     def load(self) -> Tuple[np.array, ...]:
         out = []

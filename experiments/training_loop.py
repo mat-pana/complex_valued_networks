@@ -1,3 +1,4 @@
+import time
 import torch
 from torch.nn import Module, BCEWithLogitsLoss
 from torch.optim import Optimizer
@@ -26,6 +27,8 @@ def training_loop(
     train_accs = []
     val_accs = []
     test_accs = []
+
+    start_time = time.time()
 
     for epoch in range(n_epochs):
         model.train()
@@ -74,4 +77,12 @@ def training_loop(
         if verbose:
             print(epoch, train_accuracy, val_accuracy, test_accuracy)
 
-    return {"train": train_accs, "val": val_accs, "test": test_accs}
+    end_time = time.time()
+    experiment_time = end_time - start_time
+
+    return {
+        "train": train_accs,
+        "val": val_accs,
+        "test": test_accs,
+        "experiment_time": experiment_time,
+    }

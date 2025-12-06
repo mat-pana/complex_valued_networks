@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class ComplexModReLU(nn.Module):
+class ModReLU(nn.Module):
     def __init__(self, num_features: int):
         super().__init__()
         b_init = 0.0
@@ -18,30 +18,30 @@ class ComplexModReLU(nn.Module):
         return z * scale
 
 
-class ComplexCardioid(nn.Module):
+class Cardioid(nn.Module):
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         ang = torch.angle(z)
         gain = 0.5 * (1.0 + torch.cos(ang))
         return z * gain
 
 
-class ComplexSplitGELU(nn.Module):
+class CGELU(nn.Module):
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         return torch.complex(F.gelu(z.real), F.gelu(z.imag))
 
 
-class ComplexZReLU(nn.Module):
+class zReLU(nn.Module):
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         mask = (z.real > 0) & (z.imag > 0)
         return z * mask
 
 
-class ComplexCReLU(nn.Module):
+class CReLU(nn.Module):
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         return torch.complex(F.relu(z.real), F.relu(z.imag))
 
 
-class ComplexCLeakyReLU(nn.Module):
+class CLeakyReLU(nn.Module):
     def __init__(self):
         super().__init__()
         negative_slope = 0.01
@@ -54,7 +54,7 @@ class ComplexCLeakyReLU(nn.Module):
         )
 
 
-class ComplexCELU(nn.Module):
+class CxELU(nn.Module):
     def __init__(self):
         super().__init__()
         self.alpha = 1.0
@@ -63,6 +63,6 @@ class ComplexCELU(nn.Module):
         return torch.complex(F.elu(z.real, self.alpha), F.elu(z.imag, self.alpha))
 
 
-class ComplexSoftsign(nn.Module):
+class CSoftsign(nn.Module):
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         return z / (1 + torch.abs(z))

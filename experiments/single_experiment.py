@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from typing import Literal
 
-from experiments.experiment_utils import load_data, results_to_csv
+from experiments.experiment_utils import load_data, write_log
 from experiments.training_loop import training_loop
 from utils.torch_utils import set_seed
 
@@ -47,4 +47,4 @@ def single_experiment(
         scheduler,
     )
 
-    results_to_csv(res_dict, experiment_name, dataset, log_path)
+    write_log(res_dict, experiment_name, dataset, log_path)

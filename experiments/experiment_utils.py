@@ -1,5 +1,6 @@
+import csv
 from os import PathLike, makedirs
-from os.path import join
+from os.path import join, exists
 import numpy as np
 import pandas as pd
 from torch import Tensor
@@ -106,15 +107,49 @@ def norm_fft(series: np.array) -> Tuple[np.array, np.array]:
     return normalised, ffts
 
 
+def write_log(
+    res_dict: dict,
+    experiment_name: str,
+    dataset: Literal["FordA", "FordB", "FaultDetectionA"],
+    log_path: PathLike = "results",
+) -> None:
+    results_to_csv(res_dict, experiment_name, dataset, log_path)
+    log_time(res_dict, experiment_name, dataset, log_path)
+
+
 def results_to_csv(
     res_dict: dict,
     experiment_name: str,
     dataset: Literal["FordA", "FordB", "FaultDetectionA"],
     log_path: PathLike = "results",
 ) -> None:
-    df = pd.DataFrame(res_dict)
+    needed_keys = ["train", "val", "test"]
+    sub_dict = {k: res_dict[k] for k in needed_keys}
+
+    df = pd.DataFrame(sub_dict)
     df.index.name = "epoch"
     full_dir = join(log_path, dataset)
     makedirs(full_dir, exist_ok=True)
     full_path = join(full_dir, f"{experiment_name}.csv")
     df.to_csv(full_path)
+
+
+def log_time(
+    res_dict: dict,
+    experiment_name: str,
+    dataset: Literal["FordA", "FordB", "FaultDetectionA"],
+    log_path: PathLike = "results",
+) -> None:
+    full_dir = join(log_path, dataset)
+    makedirs(full_dir, exist_ok=True)
+    full_path = join(full_dir, "times.csv")
+
+    file_exists = exists(full_path)
+
+    with open(full_path, mode="a", newline="") as f:
+        writer = csv.writer(f)
+
+        if not file_exists:
+            writer.writerow(["experiment", "duration"])
+
+        writer.writerow([experiment_name, res_dict["experiment_time"]])
