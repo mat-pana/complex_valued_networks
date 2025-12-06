@@ -35,6 +35,7 @@ class RealRNN(nn.Module):
         self.cell_type = cell.lower()
 
         for h in hidden_layers:
+            # Stack of recurrent layers followed by dropout.
             self.rnn_layers.append(
                 self._make_rnn(prev_size, h, self.cell_type, bidirectional)
             )
@@ -81,6 +82,8 @@ class RealRNN(nn.Module):
             out, _ = rnn(out)
             out = do(out)
 
+        # Only last hidden state for unidierctional and first and last for
+        # bidirectional layers.
         if not self.bidirectional:
             out = out[:, -1, :]
         else:

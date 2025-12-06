@@ -21,6 +21,7 @@ def load_data(
     loader = DatasetReader(dataset=letter)
     x_train, y_train, x_test, y_test = loader.load()
 
+    # Stratified split to keep class proportions consistent.
     x_train, x_val, y_train, y_val = train_test_split(
         x_train, y_train, test_size=0.2, random_state=seed, stratify=y_train
     )
@@ -54,6 +55,7 @@ def load_data(
         device=device,
     )
 
+    # Appropriate data presentation for each of the architectures.
     if input_type in ["single_recurrent", "dual"]:
         x_time_train = x_time_train.unsqueeze(-1)
         x_time_val = x_time_val.unsqueeze(-1)
@@ -123,6 +125,7 @@ def results_to_csv(
     dataset: Literal["FordA", "FordB", "FaultDetectionA"],
     log_path: PathLike = "results",
 ) -> None:
+    # Logs training progress.
     needed_keys = ["train", "val", "test"]
     sub_dict = {k: res_dict[k] for k in needed_keys}
 
@@ -140,6 +143,7 @@ def log_time(
     dataset: Literal["FordA", "FordB", "FaultDetectionA"],
     log_path: PathLike = "results",
 ) -> None:
+    # Logs experiment runtime.
     full_dir = join(log_path, dataset)
     makedirs(full_dir, exist_ok=True)
     full_path = join(full_dir, "times.csv")

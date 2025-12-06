@@ -24,6 +24,7 @@ class RealFeedForward(nn.Module):
         self.dropouts = nn.ModuleList()
         prev_size = input_size
         for layer_size in hidden_layers:
+            # Conventional stack of dropout followed by linear layer.
             self.dropouts.append(nn.Dropout(dropout_val))
             self.hidden_layers.append(nn.Linear(prev_size, layer_size))
             prev_size = layer_size

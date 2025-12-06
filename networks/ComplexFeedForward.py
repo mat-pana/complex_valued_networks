@@ -40,11 +40,13 @@ class ComplexFeedForward(nn.Module):
 
         prev = input_size
         for h in hidden_layers:
+            # In each block we have linear layer initialised with given gain.
             gain = complex_gain(
                 activation,
             )
             layers.append(ComplexLinear(prev, h, bias=True, init=init, gain=gain))
 
+            # Followed by activation function.
             activation_layer = self.get_activation_layer(activation, h)
             acts.append(activation_layer)
 
@@ -52,8 +54,11 @@ class ComplexFeedForward(nn.Module):
 
         self.hidden = nn.ModuleList(layers)
         self.acts = nn.ModuleList(acts)
+
+        # Just a single dropout layer as it does not need to be separate for all layers.
         self.cdrop = ComplexDropout(dropout_val)
 
+        # Final dimensionality reduction.
         self.output = nn.Linear(2 * prev, 1)
 
         self.to(self.device)

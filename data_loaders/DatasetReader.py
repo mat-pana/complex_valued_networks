@@ -29,7 +29,7 @@ class DatasetReader:
     def select_subset(
         self, series: np.array, labels: np.array
     ) -> Tuple[np.array, np.array]:
-
+        # Removes "undamaged" class.
         subset_mask = (labels != 0).flatten()
         series = series[subset_mask]
         labels = labels[subset_mask]
@@ -38,6 +38,7 @@ class DatasetReader:
 
     def encode_labels(self, labels: np.array) -> np.array:
 
+        # Unifies labeling.
         if self.dataset == "FaultDetectionA":
             labels = np.where(labels == 2, 0, 1)
         else:
@@ -46,6 +47,7 @@ class DatasetReader:
         return labels
 
     def sparsify_dataset(self, series: np.array) -> np.array:
+        # Downsampling.
         return series[:, ::10]
 
     def load_ts_file(self, path: PathLike) -> Tuple[np.array, np.array]:

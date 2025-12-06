@@ -9,14 +9,10 @@ def complex_gain(
         return math.sqrt(3.0 / 8.0)
     if act == "zrelu":
         return 0.5
-    if act in {"crelu", "splitrelu"}:
+    if act in {"crelu", "cxelu", "cgelu", "softsign"}:
         return 1.0 / math.sqrt(2.0)
     if act == "cleakyrelu":
         return math.sqrt((1.0 + 0.01**2) / 2.0)
-    if act == "modrelu":
-        return 1.0
-    if act == "phaserelu":
-        return 1.0
 
     # Defaults.
     return 1.0

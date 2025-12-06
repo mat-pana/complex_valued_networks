@@ -19,6 +19,9 @@ class FusionHead(nn.Module):
             "silu": nn.SiLU(),
         }
         layers: List[nn.Module] = []
+
+        # Lazy construction added to accommodate different different output size
+        # of preceding preceding layers.
         prev_is_lazy = True
         for h in hidden_layers:
             if prev_is_lazy:
